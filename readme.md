@@ -1,4 +1,4 @@
-# Terminal Voxel Engine
+# AsciiCraft
 
 Minecraft-like voxel world that runs entirely inside a terminal, using only POSIX library. Everything is calculated by the CPU and rendered using ASCII characters and ANSI color sequences.
 
