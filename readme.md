@@ -39,7 +39,7 @@ To destroy or place blocks, I reuse the DDA logic by casting an invisible ray fr
 |-------|--------|
 | **W / S** | Forward / Backward |
 | **A / D** | Left / Right |
-| **Space / X** | Up / Down |
+| **E / Q** | Up / Down |
 | **Arrow Keys** | Rotate View |
 | **M / B** | Destroy / Place Block |
 | **1 / 2 / 3** | Select Material (Grass, Stone, Sand) |
