@@ -1,10 +1,8 @@
 # asciicraft
 
-Minecraft-like voxel world that runs entirely inside a terminal, using only POSIX library. Everything is calculated by the CPU and rendered using ASCII characters and ANSI color sequences.
-
+Minecraft-like voxel world that runs entirely inside a terminal, using only POSIX library. Everything is calculated by the CPU and rendered using ASCII characters and ANSI color sequences. ![demo on youtube](https://youtu.be/lmFrXYUtxcc)
 
 ![Demo](demo.gif)
-
 
 ### World Structure
 The world is managed as a one-dimensional array of **Chunks**. Each chunk is a 16x16x16 cube of voxels, where each individual voxel takes up just one byte to store its ID (Air, Grass, Cobblestone, or Sand).
