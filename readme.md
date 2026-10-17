@@ -20,11 +20,11 @@ Once a collision happens, I calculate which face of the cube was hit (X, Y, or Z
 
 ### Input Handling and Fluidity
 Handling terminal input in C is tricky because the terminal usually waits for the "Enter" key to read data. This is called Canonical Mode.
-To fix this, I set the terminal to **Raw Mode** and use `poll()`. This means the terminal reads every input instantly after the key is pressed.
+To fix this, I set the terminal to Raw Mode and use poll(). This means the terminal reads every input instantly after the key is pressed.
+However, Raw Mode alone wasn't enough. In a standard terminal, arrow keys and special keys are delivered as multi-byte escape sequences — and more importantly, there is no concept of a key being released. This makes it impossible to know which keys are currently held down, which breaks smooth movement entirely and make it impossible to move the character diagonally (at least you don't want to quickly alternate between w (or s) and a (or d).
 
-I used an "accumulator" approach: in every frame, the program drains the entire standard input buffer. If you press 'W' and the 'Right Arrow' at the same time, the code sums these inputs up and applies them to the camera all at once at the end of the loop. When you press two keys that do an opposite movement (like 'w' and 's') it doesn't sum up because it would appear as a freeze moment, but the latest key take the precedence. This makes the movement feel much smoother and mitigates the lag typical of terminal escape sequences.
-
-I also normalized the movement on the horizontal plane. This means that even if you're looking straight down, your walking speed stays constant.
+To solve this, I use the Kitty Keyboard Protocol. It is an extension supported by modern terminals that changes how keyboard events are reported: every key generates its own sequence with an explicit event type, that can be 'press', 'repeat', or 'release'. This makes it possible to maintain an accurate map of which keys are currently held at any moment, and to detect multiple keys pressed simultaneously without any conflict. At startup, the program queries the terminal to check if it supports the protocol. If it doesn't, it exits immediately with an error message. Sorry :(
+Movement is physics-based rather than instant. Held keys apply acceleration to a velocity vector, and that velocity decays each frame through a damping factor — so the camera smoothly coasts to a stop instead of cutting out instantly. Rotation works the same way with its own inertia system. The movement on the horizontal plane is also normalized, so walking diagonally is never faster than walking straight. Collision uses wall-sliding: if the full movement is blocked, each axis is retried independently so the camera slides along surfaces instead of stopping dead.
 
 ### Interaction
 To destroy or place blocks, I reuse the DDA logic by casting an invisible ray from the center of the view, with a maximum range of 5 blocks.
@@ -52,7 +52,8 @@ To destroy or place blocks, I reuse the DDA logic by casting an invisible ray fr
 * `src/noise.c`: Perlin noise implementation.
 
 ### Building and Running
-You'll need a GCC compiler and a POSIX-compliant environment (Linux or macOS).
+You'll need a GCC compiler, a POSIX-compliant environment (Linux or macOS), and now a terminal that supports the Kitty Keyboard Protocol. 
+Examples of that includes: kitty, ghostty, wezterm, foot. There are many other terminals that support it, you can check the list [here.](https://sw.kovidgoyal.net/kitty/keyboard-protocol/)
 ```bash
 make
 ./mc
