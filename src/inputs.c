@@ -198,7 +198,7 @@ bool handleInputs(Camera *cam, Chunk *world) {
     if (c == '\x1b') {
       if (!parseKittySequence(cam, world)) return false;
     } else {
-      /* Kitty reports printable keys as plain chars on press events too */
+      /* Unreachable under Kitty flag 8 — kept as a defensive fallback. */
       g_keysDown[(unsigned char)c] = true;
       if (!handleActionKey(c, cam, world)) return false;
     }
