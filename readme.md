@@ -56,3 +56,6 @@ You'll need a GCC compiler and a POSIX-compliant environment (Linux or macOS).
 ```bash
 make
 ./mc
+```
+### Advice:
+A smaller font-size or a zoom-out on your terminal is recommended because smaller and numerous chars produce a better effect, but this affects performance too. 
