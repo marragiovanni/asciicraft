@@ -52,11 +52,14 @@ To destroy or place blocks, I reuse the DDA logic by casting an invisible ray fr
 * `src/noise.c`: Perlin noise implementation.
 
 ### Building and Running
-You'll need a GCC compiler, a POSIX-compliant environment (Linux or macOS), and now a terminal that supports the Kitty Keyboard Protocol. 
-Examples of that includes: kitty, ghostty, wezterm, foot. There are many other terminals that support it, you can check the list [here.](https://sw.kovidgoyal.net/kitty/keyboard-protocol/)
+You'll need a GCC compiler, a POSIX-compliant environment (Linux or macOS), and now a terminal that supports the **Kitty Keyboard Protocol**. 
+Examples of that includes: kitty, ghostty, wezterm, foot. 
+There are many other terminals that support it, you can check the list [here.](https://sw.kovidgoyal.net/kitty/keyboard-protocol/)
+
 ```bash
 make
 ./mc
 ```
+
 ### Advice:
 A smaller font-size or a zoom-out on your terminal is recommended because smaller and numerous chars produce a better effect, but this affects performance too. 
