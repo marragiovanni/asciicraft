@@ -5,8 +5,11 @@
 void cameraInit( Camera* cam, vec3 initPos, float yaw, float pitch ) {
   // init pos, yaw, pitch 
   cam->pos = initPos; 
+  cam->vel = (vec3){0.0f, 0.0f, 0.0f};
   cam->yaw = yaw; 
   cam->pitch = pitch; 
+  cam->yawVel = 0.0f;
+  cam->pitchVel = 0.0f;
   cam->selectedBlock = COBBLESTONE; 
 
   cameraUpdateVectors(cam);

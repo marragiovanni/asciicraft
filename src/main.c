@@ -73,15 +73,28 @@ int main(void) {
     perror("write"); 
   };
 
+  bool isRunning = true;
+  int exitCode = 0;
+
   // clean the screen
   if (write(STDOUT_FILENO, "\033[2J", 4) < 0) {
     perror("write");
   };
-  
+
+  /* Require Kitty Keyboard Protocol — exit cleanly if unsupported */
+  if (!checkKittySupport()) {
+    if (write(STDOUT_FILENO, "\033[?25h", 6) < 0) perror("write"); /* restore cursor */
+    fprintf(stderr,
+            "\r\nError: Kitty Keyboard Protocol is not supported by this terminal.\r\n"
+            "Supported terminals include: Kitty, Ghostty, WezTerm, Foot, Alacritty, iTerm2, Rio, etc.\r\n"
+            "For a complete list of compliant terminals, see:\r\n"
+            "https://sw.kovidgoyal.net/kitty/keyboard-protocol/\r\n\r\n");
+    isRunning = false;
+    exitCode = 1;
+  }
+
   struct timespec frameStart, frameEnd;
 
-  bool isRunning = true; 
-  int exitCode = 0; 
   while(isRunning) {
     clock_gettime(CLOCK_MONOTONIC, &frameStart);
 
