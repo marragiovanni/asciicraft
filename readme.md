@@ -16,13 +16,13 @@ To keep it fast, the process happens on two levels:
 1. **Chunk Level**: The ray travels through the world by "jumping" from chunk to chunk. If it hits a chunk where `solidCount > 0`, it enters the second level.
 2. **Voxel Level**: The ray then checks the individual blocks inside that specific chunk until it hits something solid.
 
-Once a collision happens, I calculate which face of the cube was hit (X, Y, or Z) to apply different shading. Finally, I pick the best ASCII character based on distance and the brightness of the face.
+Once a collision happens, I calculate which face of the cube was hit (X, Y, or Z) to apply different shading. Finally, I pick the best ASCII character based on the cube face.
 
 ### Input Handling and Fluidity
 Handling terminal input in C is tricky because the terminal usually waits for the "Enter" key to read data. This is called Canonical Mode.
-To fix this, I set the terminal to **Raw Mode** and use `poll()`. This means the terminal read every input instantly after the key is pressed.
+To fix this, I set the terminal to **Raw Mode** and use `poll()`. This means the terminal reads every input instantly after the key is pressed.
 
-I used an "accumulator" approach: in every frame, the program drains the entire standard input buffer. If you press 'W' and the 'Right Arrow' at the same time, the code sums these inputs up and applies them to the camera all at once at the end of the loop. This makes the movement feel much smoother and mitigates the lag typical of terminal escape sequences.
+I used an "accumulator" approach: in every frame, the program drains the entire standard input buffer. If you press 'W' and the 'Right Arrow' at the same time, the code sums these inputs up and applies them to the camera all at once at the end of the loop. When you press two keys that do an opposite movement (like 'w' and 's') it doesn't sum up because it would appear as a freeze moment, but the latest key take the precedence. This makes the movement feel much smoother and mitigates the lag typical of terminal escape sequences.
 
 I also normalized the movement on the horizontal plane. This means that even if you're looking straight down, your walking speed stays constant.
 
@@ -56,3 +56,6 @@ You'll need a GCC compiler and a POSIX-compliant environment (Linux or macOS).
 ```bash
 make
 ./mc
+```
+### Advice:
+A smaller font-size or a zoom-out on your terminal is recommended because smaller and numerous chars produce a better effect, but this affects performance too. 
