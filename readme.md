@@ -32,6 +32,18 @@ To destroy or place blocks, I reuse the DDA logic by casting an invisible ray fr
 * Pressing **B** places a new block on the face adjacent to the one you hit.
 * The `[ # ]` indicator in the bottom-left shows the color of your currently selected material.
 
+### Saving and Loading (RLE)
+Once you can edit the world with **M** and **B**, you want to keep your work. Press **F** to save the world to `world.sav` and **L** to load it back.
+
+The world is 256x64x256 voxels with one byte each, so a naive dump would be exactly 4 MB. But the data is extremely repetitive: huge stretches of air above the ground and of cobblestone underneath. That's the best case for a **RLE (run-length encoding)**: instead of storing the data of each block, we can compress a sequence like: 'AIR AIR AIR AIR AIR AIR GRASS GRASS' with just two couples: (6, AIR), (2, GRASS). And this works for every run. The 4 MB of the naive dump has been shrunk into 92 KB.  
+
+How it works:
+* **One record per chunk.** Every chunk is compressed independently, in the same order as the chunk array.
+* **Runs are packed in 16 bits.** The top 12 bits store `count - 1` and the low 4 bits store the block ID. Storing `count - 1` lets 12 bits represent 1..4096 voxels, so a whole chunk of identical blocks fits in a single run.
+* **It never makes things worse.** If RLE would not shrink a chunk (for example a chunk full of edits), the raw voxels are stored instead, marked by a flag in the record header.
+* **The file is validated.** The header contains a magic number (`MCR1`), a format version and the world dimensions, so a save from a different version or a different world size is rejected instead of being loaded as garbage. All integers are written byte by byte in little endian, so the file doesn't depend on the CPU that wrote it.
+* **Loading is safe.** The file is decoded into a temporary buffer first, and the world is overwritten only if every record is valid. A corrupted file can't destroy the world you are currently in. The `solidCount` of each chunk is not stored: it is rebuilt from the voxels while loading.
+
 ### Controls
 | Key | Action |
 |-------|--------|
@@ -40,16 +52,19 @@ To destroy or place blocks, I reuse the DDA logic by casting an invisible ray fr
 | **E / Q** | Up / Down |
 | **Arrow Keys** | Rotate View |
 | **M / B** | Destroy / Place Block |
+| **F / L** | Save / Load world | 
 | **1 / 2 / 3** | Select Material (Grass, Stone, Sand) |
 | **0** | Exit |
 
 ### Project Structure
-* `src/main.c`: Main loop and procedural generation.
+* `src/main.c`: Main loop and frame timing. 
 * `src/render.c`: Rendering core (DDA) and video buffer management.
 * `src/camera.c`: Movement, rotation, and collision logic.
 * `src/inputs.c`: Raw Mode setup and input processing.
 * `src/utils.c`: Helpers for coordinates, colors, and voxel management.
 * `src/noise.c`: Perlin noise implementation.
+* `src/world.c`: Procedural generation and world save and loading.
+* `src/rle.c` : RLE encoding and decoding.
 
 ### Building and Running
 You'll need a GCC compiler, a POSIX-compliant environment (Linux or macOS), and now a terminal that supports the **Kitty Keyboard Protocol**. 
