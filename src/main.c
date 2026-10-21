@@ -13,41 +13,7 @@
 #include "inputs.h"
 #include "render.h"
 #include "noise.h"
-
-/* Create the first state of the world */
-void initWorld(Chunk *world) {
-  for (size_t x = 0; x < WORLD_SIZE_X; x++) {
-    for (size_t z = 0; z < WORLD_SIZE_Z; z++) {
-      float h = perlin2D(x * 0.025f, z * 0.025f);
-      int height = (int)(h * 12.0f) + 24; /* range between 12 and 36*/
-
-      float b = perlin2D(x * 0.005f, z * 0.005f); 
-      int biome; 
-      if (b < -0.2f)     biome = 0; // sand 
-      else if (b < 0.3f) biome = 1; // lowland 
-      else               biome = 2; // mountains 
-      
-      for (int y = 0; y < WORLD_SIZE_Y; y++) {
-        u8 block = AIR; 
-
-        if (y <= height) {
-          if (y == height) {
-            if (biome == 0) block = SAND; // temporary 
-            else if (biome == 1) block = GRASS; 
-            else block = COBBLESTONE; 
-          }
-          else if (y > height - 3) {
-            block = GRASS; 
-          }
-          else {
-            block = COBBLESTONE; 
-          }
-        } 
-        setBlock(world, x, y, z, block);
-      }
-    }
-  }
-}
+#include "world.h"
 
 
 int main(void) {

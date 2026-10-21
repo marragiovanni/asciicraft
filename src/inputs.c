@@ -7,6 +7,7 @@
 #include "camera.h"
 #include "render.h"
 #include "utils.h"
+#include "world.h"
 
 /* Key indices for arrow keys in g_keysDown */
 #define KEY_ARROW_UP    250
@@ -88,6 +89,20 @@ static bool handleActionKey(int key, Camera *cam, Chunk *world) {
     case 'b': case 'B': {
       TargetResult t = getTargetBlock(cam, world, 5.0f);
       if (t.hit) setBlock(world, t.adjacent.x, t.adjacent.y, t.adjacent.z, cam->selectedBlock);
+      break;
+    }
+    case 'f': case 'F': {
+      if (saveWorld(world))
+        fprintf(stderr, "\r\n[world] Saved to " WORLD_SAVE_FILE "\r\n");
+      else
+        fprintf(stderr, "\r\n[world] Save FAILED\r\n");
+      break;
+    }
+    case 'l': case 'L': {
+      if (loadWorld(world))
+        fprintf(stderr, "\r\n[world] Loaded from " WORLD_SAVE_FILE "\r\n");
+      else
+        fprintf(stderr, "\r\n[world] Load FAILED\r\n");
       break;
     }
     case '0':

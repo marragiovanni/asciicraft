@@ -26,6 +26,9 @@
 #define ANSI_SAND_MIDLOW   "\x1b[2;33m" /* side z face   */
 #define ANSI_SAND_DARK     "\x1b[2;33m" /* bottom face   */
 
+#define ANSI_HUD           "\x1b[97;40m" /* bright white text on black background */
+#define COLOR_HUD          0xFD          /* sentinel in colorBuffer, like 0xFF = reset */ 
+
 
 /* --- FACE INDICES for BLOCK_COLORS second dimension --- 
  * Must match the face shading logic in computeASCIIChar:

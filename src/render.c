@@ -45,6 +45,39 @@ static bool ensureBuffers(size_t cells) {
   return true;
 }
 
+static void drawControlsHelp(size_t COLS, size_t ROWS) {
+  static const char *lines[] = {
+    "WASD: move along xy",
+    "Arrows: move camera", 
+    "E/Q: move along z", 
+    "M/B: destroy / place block",
+    "[1,2,3]: select material",
+    "F/L: save/load world file",
+    "0: quit", 
+  }; 
+   
+  const size_t n = sizeof(lines) / sizeof(lines[0]); // number of strings   
+
+  /* pad every line to the widest line so the black box is a clean rectangle */ 
+  size_t w = 0; 
+  for (size_t i = 0; i < n; i++){
+    size_t len = strlen(lines[i]); 
+    if (len > w) w = len; 
+  }
+  w += 1;
+
+  for (size_t r = 0; r < n && r < ROWS; r++) {
+    size_t len = strlen(lines[r]); 
+    for (size_t c = 0; c < w && c < COLS; c++) {
+      size_t idx = r * COLS + c; 
+      g_frameBuffer[idx] = (c < len) ? lines[r][c] : ' ';  // if there is character print it, otherwise print empty space  
+      g_colorBuffer[idx] = COLOR_HUD; 
+    }
+  }
+}
+
+
+
 /* Main render loop */
 bool render(Camera *cam, Chunk *world, size_t COLS, size_t ROWS) {
   
@@ -87,6 +120,8 @@ bool render(Camera *cam, Chunk *world, size_t COLS, size_t ROWS) {
 
   g_frameBuffer[uiIdx + 2] = ']';
   g_colorBuffer[uiIdx + 2] = 0xFF; /* Reset */
+  
+  drawControlsHelp(COLS, ROWS); 
 
   return printBuffer(g_frameBuffer, g_colorBuffer, COLS, ROWS);
 }
@@ -348,6 +383,8 @@ bool printBuffer(unsigned char *fb, u8 *colorBuffer, size_t COLS, size_t ROWS) {
       const char *esc;
       if (packed == 0xFF) {
         esc = ANSI_COLOR_RESET;
+      } else if (packed == COLOR_HUD) {
+        esc = ANSI_HUD; 
       } else {
         u8 blockID   = (packed >> 4) & 0x0F;
         u8 faceIndex =  packed       & 0x0F;
